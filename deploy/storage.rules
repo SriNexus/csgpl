@@ -1,0 +1,19 @@
+// Suggested Firebase Storage rules for the CSGPL Media Library.
+// Deploy via Firebase CLI:  firebase deploy --only storage
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Anyone (including unauthenticated visitors) may read public media.
+    match /{allPaths=**} {
+      allow read: if true;
+
+      // Only authenticated admins may upload, replace or delete.
+      allow write: if request.auth != null
+                && request.resource.size < 15 * 1024 * 1024     // 15 MB cap
+                && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

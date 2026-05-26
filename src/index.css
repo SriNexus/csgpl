@@ -1,0 +1,667 @@
+/* ============================================================
+   CSGPL · Design System — Stylesheet Entry
+   Layers (top to bottom):
+     1. @theme tokens               (Tailwind v4 design tokens)
+     2. Semantic CSS variables      (:root + [data-theme="dark"])
+     3. base                        (typography rhythm, root, scrollbar)
+     4. components                  (typography, glass, cards, buttons)
+     5. dark-mode utility overrides (hardcoded class normalisation)
+     6. utilities                   (backgrounds, masks, animations)
+     7. animations                  (keyframes)
+
+   GOAL: every component reads SEMANTIC tokens (--surface-*, --text-*,
+   --border-*). Hardcoded Tailwind utility classes (bg-white, text-gray-*)
+   are still supported via the dark-mode override section.
+   ============================================================ */
+
+@import "tailwindcss";
+
+/* ============================================================
+   1. @theme — Tailwind v4 design tokens
+   ============================================================ */
+@theme {
+  /* brand (unchanged in dark mode) */
+  --color-brand-50:  #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-200: #bbf7d0;
+  --color-brand-300: #86efac;
+  --color-brand-400: #4ade80;
+  --color-brand-500: #16a34a;
+  --color-brand-600: #15803d;
+  --color-brand-700: #166534;
+  --color-brand-800: #14532d;
+  --color-brand-900: #0d3b22;
+
+  /* ink scale — text colors (REMAPPED in dark mode below) */
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #9ca3af;
+  --color-ink-500: #6b7280;
+  --color-ink-600: #374151;
+  --color-ink-700: #1f2937;
+  --color-ink-800: #111827;
+  --color-ink-900: #0b1220;
+  --color-ink-950: #050912;
+
+  /* surface tones (REMAPPED in dark mode below) */
+  --color-paper:   #fafaf7;
+  --color-paper-2: #f4f4ef;
+
+  /* accent */
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+
+  /* type */
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif:   "Fraunces", ui-serif, Georgia, serif;
+}
+
+/* ============================================================
+   2. SEMANTIC CSS variables — the source of truth.
+   Every theme-aware component reads these, NOT raw hex codes.
+   ============================================================ */
+:root {
+  /* page-level surfaces */
+  --surface-page:        #ffffff;        /* body background */
+  --surface-elevated:    #ffffff;        /* cards */
+  --surface-muted:       #fafaf7;        /* paper sections */
+  --surface-muted-2:     #f4f4ef;        /* paper-2 / hover surface */
+  --surface-inverse:     #0b1220;        /* sections that are dark in BOTH themes */
+
+  /* text */
+  --text-strong:         #0b1220;        /* h1, h2, statement copy */
+  --text-default:        #1f2937;        /* body */
+  --text-muted:          #4b5563;        /* secondary copy, leads */
+  --text-soft:           #6b7280;        /* metadata, captions */
+  --text-faint:          #9ca3af;        /* placeholders, divider text */
+  --text-inverse:        #ffffff;        /* text on inverse surfaces */
+
+  /* borders */
+  --border-default:      rgba(15, 23, 42, 0.08);
+  --border-strong:       rgba(15, 23, 42, 0.16);
+
+  /* glass / overlays */
+  --glass-bg:            rgba(255, 255, 255, 0.82);
+  --glass-border:        rgba(255, 255, 255, 0.55);
+
+  /* scrollbar */
+  --scrollbar-track:     #f1f5f9;
+
+  /* shadow tints */
+  --shadow-soft-tint:    rgba(2, 32, 18, 0.12);
+  --shadow-premium-tint: rgba(8, 28, 18, 0.28);
+
+  /* gradient text (so dark mode can adjust if needed) */
+  --gradient-brand:      linear-gradient(95deg, #15803d 0%, #16a34a 40%, #f97316 100%);
+  --gradient-warm:       linear-gradient(95deg, #f59e0b 0%, #f97316 60%, #ef4444 100%);
+
+  /* image overlay (cinematic gradient) */
+  --image-overlay:       linear-gradient(180deg, rgba(11,18,32,0) 50%, rgba(11,18,32,.55) 100%);
+}
+
+/* ============================================================
+   Dark theme — REMAPS every semantic token
+   ============================================================ */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* surfaces — deep navy/slate, NOT pure black */
+  --surface-page:        #0b1220;        /* body */
+  --surface-elevated:    #161e30;        /* cards (clearly lifted above page) */
+  --surface-muted:       #111827;        /* paper sections */
+  --surface-muted-2:     #1a2235;        /* paper-2 / hover surface */
+  --surface-inverse:     #050912;        /* stay-dark sections (footer, hero strips) */
+
+  /* text — WCAG AA against surfaces above */
+  --text-strong:         #f8fafc;        /* headings */
+  --text-default:        #e2e8f0;        /* body */
+  --text-muted:          #b8c2d1;        /* secondary */
+  --text-soft:           #94a3b8;        /* metadata */
+  --text-faint:          #64748b;        /* placeholders */
+  --text-inverse:        #0b1220;        /* text on light-inverse */
+
+  /* borders — visible but not harsh */
+  --border-default:      rgba(255, 255, 255, 0.10);
+  --border-strong:       rgba(255, 255, 255, 0.20);
+
+  /* glass — more opaque so content underneath doesn't leak through */
+  --glass-bg:            rgba(22, 30, 48, 0.82);
+  --glass-border:        rgba(255, 255, 255, 0.10);
+
+  /* scrollbar */
+  --scrollbar-track:     #1a2235;
+
+  /* shadows — heavier */
+  --shadow-soft-tint:    rgba(0, 0, 0, 0.55);
+  --shadow-premium-tint: rgba(0, 0, 0, 0.65);
+
+  /* gradient text — brighter end stops so it pops on dark */
+  --gradient-brand:      linear-gradient(95deg, #4ade80 0%, #34d399 40%, #fbbf24 100%);
+  --gradient-warm:       linear-gradient(95deg, #fbbf24 0%, #f97316 60%, #fb7185 100%);
+
+  /* image overlay can stay; image is dark anyway */
+  --image-overlay:       linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,.6) 100%);
+
+  /* ---- Remap Tailwind ink/paper utilities so existing classes "just work" ---- */
+  --color-paper:   #111827;
+  --color-paper-2: #1a2235;
+  --color-ink-300: #475569;
+  --color-ink-400: #64748b;
+  --color-ink-500: #94a3b8;
+  --color-ink-600: #cbd5e1;
+  --color-ink-700: #e2e8f0;
+  --color-ink-800: #f1f5f9;
+  --color-ink-900: #f8fafc;
+  --color-ink-950: #ffffff;
+}
+
+/* Cross-theme transition for top-level surfaces only (avoid janky color changes) */
+html, body { transition: background-color .35s ease, color .35s ease; }
+.card, .glass, .glass-dark, .btn-ghost, .btn-dark {
+  transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+}
+
+/* ============================================================
+   3. BASE
+   ============================================================ */
+@layer base {
+  html, body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--surface-page);
+    color: var(--text-strong);
+    scroll-behavior: smooth;
+    font-feature-settings: "ss01", "cv02", "cv11";
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    font-feature-settings: "ss01", "cv11";
+    color: var(--text-strong);
+  }
+  h1 { line-height: 1.02; font-weight: 800; }
+  h2 { line-height: 1.05; font-weight: 800; }
+  h3 { line-height: 1.15; font-weight: 700; }
+  h4 { line-height: 1.25; font-weight: 700; }
+  p  { line-height: 1.65; color: var(--text-default); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color-brand-500), var(--color-brand-900));
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-brand-900); }
+  ::selection { background: var(--color-brand-500); color: #fff; }
+}
+
+/* ============================================================
+   4. COMPONENTS
+   ============================================================ */
+@layer components {
+
+  /* --- typography primitives --- */
+  .lead {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    max-width: 60ch;
+  }
+  .eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-brand-600);
+  }
+  [data-theme="dark"] .eyebrow { color: #4ade80; }
+  .serif {
+    font-family: var(--font-serif);
+    font-style: italic;
+    letter-spacing: -0.01em;
+  }
+  .measure    { max-width: 62ch; }
+  .measure-sm { max-width: 48ch; }
+
+  /* --- surfaces --- */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border: 1px solid var(--glass-border);
+    color: var(--text-strong);
+  }
+  .glass-dark {
+    background: rgba(11,18,32,0.65);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: #f8fafc;
+  }
+  .hairline { border-color: var(--border-default); }
+
+  /* --- elevation --- */
+  .shadow-soft {
+    box-shadow:
+      0 10px 40px -10px var(--shadow-soft-tint),
+      0 2px 6px rgba(0,0,0,0.03);
+  }
+  .shadow-premium {
+    box-shadow:
+      0 40px 80px -28px var(--shadow-premium-tint),
+      0 14px 36px -14px rgba(22,163,74,.18);
+  }
+
+  /* --- section surfaces (used by Section primitive) --- */
+  .section-surface-white {
+    background-color: var(--surface-page);
+    color: var(--text-strong);
+  }
+  .section-surface-paper {
+    background-color: var(--surface-muted);
+    color: var(--text-strong);
+  }
+
+  /* --- cards --- */
+  .card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: 1.25rem;
+    color: var(--text-default);
+  }
+  .card-hover {
+    transition:
+      transform .45s cubic-bezier(.2,.7,.2,1),
+      box-shadow .45s ease,
+      border-color .45s ease,
+      background-color .45s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 40px 80px -28px var(--shadow-premium-tint);
+    border-color: var(--color-brand-500);
+  }
+  [data-theme="dark"] .card-hover:hover {
+    /* On dark, lift the card colour slightly so the hover is felt */
+    background: var(--surface-muted-2);
+    border-color: var(--color-brand-400);
+  }
+
+  /* --- buttons --- */
+  .btn-primary {
+    background: linear-gradient(135deg, #0d3b22 0%, #15803d 55%, #16a34a 100%);
+    color: #ffffff;
+    box-shadow:
+      0 14px 32px -12px rgba(22,163,74,.55),
+      inset 0 1px 0 rgba(255,255,255,.18);
+    transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s, filter .25s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow:
+      0 18px 40px -14px rgba(22,163,74,.7),
+      inset 0 1px 0 rgba(255,255,255,.22);
+  }
+  [data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 55%, #22c55e 100%);
+  }
+
+  .btn-ghost {
+    background: var(--surface-elevated);
+    color: var(--text-strong);
+    border: 1px solid var(--border-default);
+    transition: all .25s cubic-bezier(.2,.7,.2,1);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-brand-500);
+    color: var(--color-brand-600);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 30px -16px rgba(22,163,74,.5);
+  }
+  [data-theme="dark"] .btn-ghost:hover { color: #4ade80; }
+
+  .btn-dark {
+    background: #0b1220;
+    color: #ffffff;
+    border: 1px solid #1f2937;
+    transition: all .25s ease;
+  }
+  .btn-dark:hover {
+    background: #111827;
+    border-color: var(--color-brand-500);
+  }
+  [data-theme="dark"] .btn-dark {
+    background: var(--surface-muted-2);
+    border-color: var(--border-default);
+  }
+  [data-theme="dark"] .btn-dark:hover {
+    background: var(--surface-elevated);
+    border-color: var(--color-brand-400);
+  }
+
+  /* arrow link */
+  .arrow-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-weight: 700;
+  }
+  .arrow-link::after {
+    content: "";
+    height: 1px;
+    width: 0;
+    background: currentColor;
+    transition: width .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .arrow-link:hover::after { width: 1.5rem; }
+
+  /* gradient text — driven by theme variable */
+  .text-gradient-brand {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-warm {
+    background: var(--gradient-warm);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+
+  /* image treatments */
+  .img-cinematic {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .img-cinematic::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--image-overlay);
+    pointer-events: none;
+  }
+  .img-duotone { filter: contrast(1.05) saturate(1.05); }
+  .img-zoom { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
+  .group:hover .img-zoom { transform: scale(1.08); }
+}
+
+/* ============================================================
+   5. DARK-MODE NORMALISATION
+   Override the Tailwind utility classes that hardcode light-mode
+   colours so existing components stay readable in dark mode.
+   ============================================================ */
+
+/* ---- Page-level: body uses semantic token ---- */
+[data-theme="dark"] body { background: var(--surface-page); color: var(--text-strong); }
+
+/* ---- White-based backgrounds → elevated surface ---- */
+[data-theme="dark"] .bg-white                { background-color: var(--surface-elevated) !important; }
+[data-theme="dark"] .bg-white\/95             { background-color: rgba(22, 30, 48, 0.94)  !important; }
+[data-theme="dark"] .bg-white\/90             { background-color: rgba(22, 30, 48, 0.88)  !important; }
+[data-theme="dark"] .bg-white\/85             { background-color: rgba(22, 30, 48, 0.82)  !important; }
+[data-theme="dark"] .bg-white\/82             { background-color: rgba(22, 30, 48, 0.82)  !important; }
+[data-theme="dark"] .bg-white\/80             { background-color: rgba(22, 30, 48, 0.80)  !important; }
+[data-theme="dark"] .bg-white\/70             { background-color: rgba(22, 30, 48, 0.72)  !important; }
+[data-theme="dark"] .bg-white\/65             { background-color: rgba(22, 30, 48, 0.68)  !important; }
+[data-theme="dark"] .bg-white\/60             { background-color: rgba(22, 30, 48, 0.62)  !important; }
+[data-theme="dark"] .bg-white\/50             { background-color: rgba(22, 30, 48, 0.55)  !important; }
+[data-theme="dark"] .bg-white\/15             { background-color: rgba(255,255,255,0.08)  !important; }
+[data-theme="dark"] .bg-white\/10             { background-color: rgba(255,255,255,0.06)  !important; }
+[data-theme="dark"] .bg-white\/5              { background-color: rgba(255,255,255,0.05)  !important; }
+[data-theme="dark"] .bg-white\/\[0\.04\]      { background-color: rgba(255,255,255,0.05)  !important; }
+[data-theme="dark"] .bg-white\/\[0\.06\]      { background-color: rgba(255,255,255,0.07)  !important; }
+[data-theme="dark"] .bg-white\/\[0\.08\]      { background-color: rgba(255,255,255,0.08)  !important; }
+
+/* ---- Gray-scale surfaces ---- */
+[data-theme="dark"] .bg-gray-50              { background-color: var(--surface-muted)   !important; }
+[data-theme="dark"] .bg-gray-100             { background-color: var(--surface-muted-2) !important; }
+[data-theme="dark"] .bg-gray-200             { background-color: #24314a                !important; }
+
+/* ---- Paper utility points at the dark muted surface ---- */
+[data-theme="dark"] .bg-paper                { background-color: var(--surface-muted)   !important; }
+[data-theme="dark"] .bg-paper-2              { background-color: var(--surface-muted-2) !important; }
+
+/* ---- Borders ---- */
+[data-theme="dark"] .border-gray-100         { border-color: var(--border-default) !important; }
+[data-theme="dark"] .border-gray-200         { border-color: var(--border-default) !important; }
+[data-theme="dark"] .border-gray-300         { border-color: var(--border-strong)  !important; }
+
+/* ---- Text scale (Tailwind grays → dark-mode equivalents) ---- */
+[data-theme="dark"] .text-gray-400           { color: #94a3b8 !important; }
+[data-theme="dark"] .text-gray-500           { color: #b8c2d1 !important; }
+[data-theme="dark"] .text-gray-600           { color: #cbd5e1 !important; }
+[data-theme="dark"] .text-gray-700           { color: #e2e8f0 !important; }
+[data-theme="dark"] .text-gray-800           { color: #f1f5f9 !important; }
+[data-theme="dark"] .text-gray-900           { color: #f8fafc !important; }
+
+/* ---- Brand-tinted soft backgrounds ---- */
+[data-theme="dark"] .bg-brand-50             { background-color: rgba(22,163,74,0.14)  !important; }
+[data-theme="dark"] .bg-brand-100            { background-color: rgba(22,163,74,0.22)  !important; }
+[data-theme="dark"] .bg-amber-50             { background-color: rgba(245,158,11,0.14) !important; }
+[data-theme="dark"] .bg-amber-100            { background-color: rgba(245,158,11,0.22) !important; }
+[data-theme="dark"] .bg-emerald-50           { background-color: rgba(16,185,129,0.14) !important; }
+[data-theme="dark"] .bg-emerald-100          { background-color: rgba(16,185,129,0.22) !important; }
+[data-theme="dark"] .bg-rose-50              { background-color: rgba(244,63,94,0.14)  !important; }
+[data-theme="dark"] .bg-rose-100             { background-color: rgba(244,63,94,0.22)  !important; }
+
+/* ---- Brand text — boost saturation for dark ---- */
+[data-theme="dark"] .text-brand-600          { color: #4ade80 !important; }
+[data-theme="dark"] .text-brand-700          { color: #4ade80 !important; }
+[data-theme="dark"] .text-brand-800          { color: #34d399 !important; }
+[data-theme="dark"] .text-amber-600          { color: #fbbf24 !important; }
+[data-theme="dark"] .text-amber-700          { color: #fbbf24 !important; }
+[data-theme="dark"] .text-emerald-600        { color: #6ee7b7 !important; }
+[data-theme="dark"] .text-emerald-700        { color: #6ee7b7 !important; }
+[data-theme="dark"] .text-rose-600           { color: #fda4af !important; }
+[data-theme="dark"] .text-rose-700           { color: #fda4af !important; }
+
+/* ---- Brand-coloured underlines/borders ---- */
+[data-theme="dark"] .border-brand-100        { border-color: rgba(22,163,74,0.30) !important; }
+[data-theme="dark"] .border-brand-200        { border-color: rgba(22,163,74,0.36) !important; }
+[data-theme="dark"] .ring-brand-100          { --tw-ring-color: rgba(22,163,74,0.30) !important; }
+
+/* ---- Ring colors used as subtle dividers ---- */
+[data-theme="dark"] .ring-ink-900\/5,
+[data-theme="dark"] .ring-ink-900\/\[0\.05\],
+[data-theme="dark"] .ring-ink-900\/\[0\.06\] { --tw-ring-color: rgba(255,255,255,0.10) !important; }
+
+/* ---- Divide colours ---- */
+[data-theme="dark"] .divide-ink-900\/\[0\.07\] > * + * { border-color: rgba(255,255,255,0.10) !important; }
+[data-theme="dark"] .divide-gray-100 > * + *           { border-color: rgba(255,255,255,0.10) !important; }
+
+/* ---- Subtle ink/N% overlays used as inset tints ---- */
+[data-theme="dark"] .bg-ink-900\/\[0\.04\] { background-color: rgba(255,255,255,0.05) !important; }
+[data-theme="dark"] .bg-ink-900\/\[0\.06\] { background-color: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .bg-ink-900\/\[0\.08\] { background-color: rgba(255,255,255,0.09) !important; }
+[data-theme="dark"] .bg-ink-900\/40        { background-color: rgba(0,0,0,0.55)       !important; }
+[data-theme="dark"] .bg-ink-900\/65        { background-color: rgba(0,0,0,0.65)       !important; }
+
+/* ---- Solid bg-ink-900 / 800 stay DARK in dark mode too (used for "always dark"
+   chips, numbered badges, active filter pills, dark cards). They carry
+   text-white siblings, so the contrast is preserved. ---- */
+[data-theme="dark"] .bg-ink-900             { background-color: #050912 !important; }
+[data-theme="dark"] .bg-ink-800             { background-color: #0b1220 !important; }
+[data-theme="dark"] .border-ink-900         { border-color: #050912 !important; }
+[data-theme="dark"] .ring-ink-900           { --tw-ring-color: #050912 !important; }
+
+/* ---- Likewise ring-paper / ring-white wrapping a numbered chip
+   should pick the surrounding section's background ---- */
+[data-theme="dark"] .ring-paper             { --tw-ring-color: var(--surface-muted) !important; }
+
+/* ---- Pattern overlays flip from dark dots to light dots ---- */
+[data-theme="dark"] .bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px) !important;
+}
+[data-theme="dark"] .bg-grid-fine {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px) !important;
+}
+[data-theme="dark"] .bg-dots {
+  background-image: radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px) !important;
+}
+
+/* ---- Aurora glow on dark ---- */
+[data-theme="dark"] .bg-aurora {
+  background:
+    radial-gradient(900px 500px at 10% 0%,   rgba(22,163,74,.18), transparent 60%),
+    radial-gradient(700px 500px at 95% 10%,  rgba(249,115,22,.14), transparent 60%),
+    radial-gradient(700px 600px at 50% 100%, rgba(34,197,94,.16), transparent 60%) !important;
+}
+
+/* ---- Soft fade backdrop becomes invisible in dark (it relied on paper→white in light) ---- */
+[data-theme="dark"] .bg-gradient-to-b.from-paper { background-image: none !important; }
+
+/* ---- Glass containers in dark mode use the dark glass colours ---- */
+[data-theme="dark"] .glass {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-border) !important;
+  color: var(--text-strong) !important;
+}
+
+/* ---- Author/initials avatar rings ---- */
+[data-theme="dark"] .ring-white               { --tw-ring-color: var(--surface-elevated) !important; }
+[data-theme="dark"] .ring-brand-50            { --tw-ring-color: rgba(22,163,74,0.20)    !important; }
+
+/* ---- Form fields ---- */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  color-scheme: dark;
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: var(--text-faint) !important; }
+
+/* ---- Code chips ---- */
+[data-theme="dark"] code.bg-paper            { background-color: var(--surface-muted-2) !important; color: var(--text-strong) !important; }
+
+/* ============================================================
+   6. UTILITIES (light defaults — overridden above for dark)
+   ============================================================ */
+@layer utilities {
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(15,23,42,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,23,42,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .bg-grid-fine {
+    background-image:
+      linear-gradient(rgba(15,23,42,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,23,42,0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .bg-dots {
+    background-image: radial-gradient(rgba(15,23,42,0.10) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .bg-radial-fade {
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(22,163,74,.18), transparent 60%),
+      radial-gradient(800px 400px at 90% 10%,   rgba(249,115,22,.10), transparent 60%);
+  }
+  .bg-aurora {
+    background:
+      radial-gradient(900px 500px at 10% 0%,   rgba(22,163,74,.18), transparent 60%),
+      radial-gradient(700px 500px at 95% 10%,  rgba(249,115,22,.12), transparent 60%),
+      radial-gradient(700px 600px at 50% 100%, rgba(34,197,94,.14), transparent 60%);
+  }
+  .bg-noise {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+  }
+
+  .mask-fade-r {
+    -webkit-mask-image: linear-gradient(90deg, black 70%, transparent);
+            mask-image: linear-gradient(90deg, black 70%, transparent);
+  }
+  .mask-fade-l {
+    -webkit-mask-image: linear-gradient(-90deg, black 70%, transparent);
+            mask-image: linear-gradient(-90deg, black 70%, transparent);
+  }
+
+  .divider-soft {
+    background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+    height: 1px;
+  }
+
+  .no-tap { -webkit-tap-highlight-color: transparent; }
+
+  /* animation utilities */
+  .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
+  .animate-fade-up    { animation: fade-up .9s cubic-bezier(.2,.7,.2,1) both; }
+  .animate-marquee    { animation: marquee 32s linear infinite; }
+  .animate-pulse-glow { animation: pulse-glow 2.2s ease-in-out infinite; }
+  .animate-pulse-ring { position: relative; }
+  .animate-pulse-ring::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: rgba(22,163,74,.45);
+    animation: pulse-ring 1.8s cubic-bezier(.215,.61,.355,1) infinite;
+  }
+
+  /* CSS stagger reveal */
+  .stagger > * { opacity: 0; animation: fade-up .9s cubic-bezier(.2,.7,.2,1) forwards; }
+  .stagger > *:nth-child(1) { animation-delay: .05s }
+  .stagger > *:nth-child(2) { animation-delay: .15s }
+  .stagger > *:nth-child(3) { animation-delay: .25s }
+  .stagger > *:nth-child(4) { animation-delay: .35s }
+  .stagger > *:nth-child(5) { animation-delay: .45s }
+  .stagger > *:nth-child(6) { animation-delay: .55s }
+  .stagger > *:nth-child(7) { animation-delay: .65s }
+  .stagger > *:nth-child(8) { animation-delay: .75s }
+}
+
+/* ============================================================
+   7. ANIMATIONS
+   ============================================================ */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+@keyframes pulse-ring {
+  0%       { transform: scale(.9);  opacity: .7; }
+  80%,100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0  rgba(22,163,74,.45); }
+  50%      { box-shadow: 0 0 0 18px rgba(22,163,74,0); }
+}
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Mobile motion adjustments */
+@media (max-width: 640px) {
+  .animate-float-slow { animation-duration: 8s; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-fade-up,
+  .animate-marquee,
+  .animate-pulse-glow,
+  .stagger > *,
+  .img-zoom { animation: none !important; transition: none !important; }
+  .stagger > * { opacity: 1; }
+}

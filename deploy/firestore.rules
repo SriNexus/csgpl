@@ -1,0 +1,44 @@
+// Suggested Firestore security rules for the CSGPL CMS.
+// Deploy via Firebase CLI:  firebase deploy --only firestore:rules
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function isAdmin() {
+      return request.auth != null;
+      // Tighten when role-based ACLs land:
+      // return request.auth != null && request.auth.token.admin == true;
+    }
+
+    function isPublicReadable() {
+      return resource.data.status == null
+          || resource.data.status == 'published';
+    }
+
+    // ── Leads (consultation form) ────────────────────────────────
+    match /leads/{id} {
+      allow create: if true;                 // anonymous form submissions
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── Public CMS collections ──────────────────────────────────
+    match /blogs/{id}        { allow read: if isPublicReadable(); allow write: if isAdmin(); }
+    match /pages/{id}        { allow read: if isPublicReadable(); allow write: if isAdmin(); }
+    match /products/{id}     { allow read: if true; allow write: if isAdmin(); }
+    match /projects/{id}     { allow read: if true; allow write: if isAdmin(); }
+    match /testimonials/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /solutions/{id}    { allow read: if true; allow write: if isAdmin(); }
+    match /categories/{id}   { allow read: if true; allow write: if isAdmin(); }
+    match /faqs/{id}         { allow read: if true; allow write: if isAdmin(); }
+    match /media/{id}        { allow read: if true; allow write: if isAdmin(); }
+
+    // ── Page-section singleton docs ─────────────────────────────
+    match /pages/home/sections/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
