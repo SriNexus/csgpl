@@ -35,12 +35,8 @@ export const heroContent = {
   featuredProject: {
     image: "https://images.pexels.com/photos/17965455/pexels-photo-17965455.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=900",
     secondaryImage: "https://images.pexels.com/photos/9799702/pexels-photo-9799702.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=300&w=240",
-    label: "Featured Project",
-    title: "12.5 KW Residential — Lucknow",
-    metricLabel: "Monthly Bill",
-    metricValue: "₹430",
   },
-  partners: ["Waaree", "Adani Solar", "Tata Power", "Luminous", "Polycab", "Havells", "Vikram", "Goldi"],
+  partners: ["Feston", "Emmvee", "Jakson", "ReneSys", "Microtek"],
 } as const;
 
 /* =========================================================

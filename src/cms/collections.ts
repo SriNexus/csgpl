@@ -177,6 +177,36 @@ export interface ProcessStepRecord extends CmsRecord {
   iconKey?: string;
 }
 
+/**
+ * Hero Slider Slide — premium campaign-style hero carousel.
+ * Each slide supports:
+ *   • Desktop & mobile images (auto-swap based on viewport)
+ *   • Heading, subheading, CTA text/link
+ *   • Overlay opacity control
+ *   • Active/inactive toggle for disabling slides
+ *   • Sort order for carousel sequencing
+ */
+export interface HeroSlideRecord extends CmsRecord {
+  /** Slide heading text — large, bold */
+  heading: string;
+  /** Slide subheading — supporting text */
+  subheading?: string;
+  /** Desktop image URL (1920×900 px recommended) */
+  desktopImage: string;
+  /** Mobile image URL (1080×1350 px recommended) — auto-selected on small viewports */
+  mobileImage: string;
+  /** CTA button text */
+  buttonText?: string;
+  /** CTA button target URL */
+  buttonUrl?: string;
+  /** Overlay darkness (0–1), default 0.3 */
+  overlayOpacity?: number;
+  /** Slide visibility toggle */
+  active?: boolean;
+  /** Display order in carousel (lower = earlier) */
+  order?: number;
+}
+
 /* =========================================================
    Collection registry
    Each entry maps a collection key → typed seed data.
@@ -255,6 +285,11 @@ export const cmsCollections = {
     key: "media",
     seed: [] as MediaRecord[],
   } as CollectionDef<MediaRecord>,
+
+  heroSlides: {
+    key: "heroSlides",
+    seed: [] as HeroSlideRecord[],
+  } as CollectionDef<HeroSlideRecord>,
 } as const;
 
 export type CollectionKey = keyof typeof cmsCollections;

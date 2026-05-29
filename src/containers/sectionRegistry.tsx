@@ -8,11 +8,12 @@
 
 import type {
   HomeSectionId,
-  ProjectRecord, TestimonialRecord, FaqRecord,
+  ProjectRecord, TestimonialRecord, FaqRecord, HeroSlideRecord,
 } from "@/cms";
 import type { heroContent } from "@/data/content";
 
 import Hero from "@/sections/Hero";
+import HeroSlider from "@/sections/HeroSlider";
 import StatsBand from "@/sections/StatsBand";
 import Services from "@/sections/Services";
 import WhyGoSolar from "@/sections/WhyGoSolar";
@@ -28,6 +29,7 @@ import FinalCta from "@/sections/FinalCta";
 /** Aggregate payload passed by HomeContainer into the registry. */
 export interface HomePageData {
   hero:         typeof heroContent;
+  heroSlides:   HeroSlideRecord[];
   projects:     ProjectRecord[];
   testimonials: TestimonialRecord[];
   faqs:         FaqRecord[];
@@ -35,7 +37,9 @@ export interface HomePageData {
 
 /** Each section returns React.ReactNode. Order is decided by HomeContainer. */
 export const sectionRegistry: Record<HomeSectionId, (d: HomePageData) => React.ReactNode> = {
-  hero:         (d) => <Hero          content={d.hero} />,
+  hero:         (d) => d.heroSlides && d.heroSlides.length > 0 
+    ? <HeroSlider slides={d.heroSlides} />
+    : <Hero content={d.hero} />,
   statsBand:    ()  => <StatsBand />,
   services:     ()  => <Services />,
   whyGoSolar:   ()  => <WhyGoSolar />,

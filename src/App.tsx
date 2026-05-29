@@ -21,6 +21,7 @@ const RequireAuth      = lazy(() => import("./admin/RequireAuth"));
 const AdminLayout      = lazy(() => import("./admin/layout/AdminLayout"));
 const DashboardView    = lazy(() => import("./admin/views/DashboardView"));
 const LeadsView        = lazy(() => import("./admin/views/LeadsView"));
+const HeroSliderView   = lazy(() => import("./admin/views/HeroSliderView"));
 const ProjectsView     = lazy(() => import("./admin/views/ProjectsView"));
 const TestimonialsView = lazy(() => import("./admin/views/TestimonialsView"));
 const ProductsView     = lazy(() => import("./admin/views/ProductsView"));
@@ -70,6 +71,7 @@ function AppRoutes() {
           >
             <Route index element={<DashboardView />} />
             <Route path="leads" element={<LeadsView />} />
+            <Route path="hero-slider" element={<HeroSliderView />} />
             <Route path="pages" element={<PageBuilderView />} />
 
             {/* Blog */}

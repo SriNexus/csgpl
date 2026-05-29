@@ -14,7 +14,7 @@
 import { useMemo } from "react";
 import { useCmsCollection, useCmsDocument } from "@/cms";
 import type {
-  ProjectRecord, TestimonialRecord, FaqRecord,
+  ProjectRecord, TestimonialRecord, FaqRecord, HeroSlideRecord,
 } from "@/cms";
 
 import Seo from "@/components/Seo";
@@ -24,6 +24,7 @@ import { sectionRegistry, sectionLabels, type HomePageData } from "./sectionRegi
 export default function HomeContainer() {
   /* ---------- CMS reads (only what sections actually need) ---------- */
   const heroDoc       = useCmsDocument("hero");
+  const heroSlidesQ   = useCmsCollection<HeroSlideRecord>("heroSlides");
   const layoutDoc     = useCmsDocument("homepageLayout");
   const projectsQ     = useCmsCollection<ProjectRecord>("projects");
   const testimonialsQ = useCmsCollection<TestimonialRecord>("testimonials");
@@ -32,10 +33,11 @@ export default function HomeContainer() {
   /* ---------- Aggregated payload ---------- */
   const data = useMemo<HomePageData>(() => ({
     hero:         heroDoc.data,
+    heroSlides:   heroSlidesQ.data,
     projects:     projectsQ.data,
     testimonials: testimonialsQ.data,
     faqs:         faqsQ.data,
-  }), [heroDoc.data, projectsQ.data, testimonialsQ.data, faqsQ.data]);
+  }), [heroDoc.data, heroSlidesQ.data, projectsQ.data, testimonialsQ.data, faqsQ.data]);
 
   /* ---------- Ordered, enabled section ids ---------- */
   const orderedIds = useMemo(() => {

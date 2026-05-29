@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Users, FileText, Package, Briefcase, Star,
   LogOut, Image as ImageIcon, Layers, Globe, BarChart3, ChevronRight,
-  Settings, Palette, Tag, FileStack, Stethoscope, HeartPulse, type LucideIcon,
+  Settings, Palette, Tag, FileStack, Stethoscope, HeartPulse, Film, type LucideIcon,
 } from "lucide-react";
 import Logo from "@/components/Logo";
 import { adminAuth } from "@/admin/auth";
@@ -19,6 +19,7 @@ export interface AdminNavItem {
 export const ADMIN_NAV: AdminNavItem[] = [
   { to: "/admin",                   label: "Dashboard",     icon: LayoutDashboard, end: true },
   { to: "/admin/leads",             label: "Leads",         icon: Users },
+  { to: "/admin/hero-slider",       label: "Hero Slider",   icon: Film },
   { to: "/admin/pages",             label: "Homepage Builder", icon: Layers },
   { to: "/admin/pages-builder",     label: "Pages",         icon: FileStack },
   { to: "/admin/blogs",             label: "Blogs",         icon: FileText },
